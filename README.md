@@ -30,3 +30,10 @@ deno task run [args]
 deno task compile
 ```
 Will output binaries in `target` dir.
+
+### To do
+
+- [x] Parse non-JSON responses.
+- [] Watch mode. Clear buffer correctly for selected services while watching.
+- [] Docs.
+- [] Build releases with GitHub Actions.
