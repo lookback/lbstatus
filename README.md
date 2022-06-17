@@ -34,6 +34,6 @@ Will output binaries in `target` dir.
 ### To do
 
 - [x] Parse non-JSON responses.
-- [] Watch mode. Clear buffer correctly for selected services while watching.
-- [] Docs.
-- [] Build releases with GitHub Actions.
+- [ ] Watch mode. Clear buffer correctly for selected services while watching.
+- [ ] Docs.
+- [ ] Build releases with GitHub Actions.
