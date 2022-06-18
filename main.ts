@@ -63,7 +63,7 @@ ${Object.keys(allServices).map((s) => `* ${s}`).join('\n')}`);
         return allServices;
     })();
 
-    const doRun = async (clear: boolean) => {
+    const doRun = async () => {
         const results = await Promise.allSettled(
             Object.entries(todo).map(([service, url]) => fetchStatus(service, url, env)),
         );
@@ -71,10 +71,11 @@ ${Object.keys(allServices).map((s) => `* ${s}`).join('\n')}`);
         const out = results.map((res): string => {
             // Deno still shows status as "fulfilled" even for rejected promises :O
             const value = (res as PromiseFulfilledResult<Result>).value;
+            const prefix = args.watch ? colors.dim('[' + formatTime(new Date()) + '] ') : '';
 
             switch (value.kind) {
                 case 'success':
-                    return colors.green(`${value.service.padEnd(25)}`) +
+                    return prefix + colors.green(`${value.service.padEnd(25)}`) +
                         ' ' +
                         env +
                         (value.gitHash ? ' ' + colors.cyan(value.gitHash.substring(0, 8)) : '') +
@@ -84,24 +85,20 @@ ${Object.keys(allServices).map((s) => `* ${s}`).join('\n')}`);
                             `uptime: ${value.uptime ? humanTimeOf(value.uptime) : '-'}`,
                         );
                 case 'err':
-                    return colors.red(`%c${value.service.padEnd(10)}\t${value.msg}`);
+                    return prefix + colors.red(`%c${value.service.padEnd(10)}\t${value.msg}`);
             }
         });
 
-        if (clear) {
-            Deno.stdout.writeSync(new TextEncoder().encode(out.join('\r')));
-        } else {
-            console.log(out.join('\n'));
-        }
+        console.log(out.join('\n'));
     };
 
     if (args.watch) {
         while (1) {
-            await doRun(true);
+            await doRun();
             await sleep(2000);
         }
     } else {
-        await doRun(false);
+        await doRun();
     }
 };
 
@@ -304,6 +301,12 @@ const formatCommit = (commit: Commit): string => {
     const author = initials(commit.author.name).toLowerCase();
     return `${author}: ${msg}`;
 };
+
+const formatter = new Intl.DateTimeFormat(undefined, {
+    timeStyle: 'medium',
+});
+
+const formatTime = (d: Date): string => formatter.format(d);
 
 const truncate = (s: string, max: number) => s.length > max ? s.substring(0, max - 1) + '…' : s;
 const initials = (s: string) => s.split(' ').map((st) => st[0]).join('');
