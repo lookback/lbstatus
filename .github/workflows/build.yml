@@ -1,0 +1,32 @@
+name: Build and Release lbstatus
+
+on:
+    push:
+        paths:
+            - 'deno.json'
+            - 'main.ts'
+            - 'deps.ts'
+            - 'build'
+            - 'import_map.json'
+            - '.github/workflows/build.yml'
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Setup deno
+              uses: denoland/setup-deno@v1
+              with:
+                  deno-version: v1.22.x
+
+            - name: Build targets
+              run: deno task compile
+            
+            - name: Release
+              uses: softprops/action-gh-release@v1
+              if: startsWith(github.ref, 'refs/tags/')
+              with:
+                files: 'target/**/*'
