@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+rm -rf target
+
 archs=(
     x86_64-unknown-linux-gnu \
     x86_64-pc-windows-msvc \
@@ -8,6 +10,5 @@ archs=(
 )
 
 for arch in ${archs[@]}; do
-    echo "Emit target/$arch"
     ARCH=$arch deno task -q compile
 done

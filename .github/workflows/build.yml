@@ -23,10 +23,10 @@ jobs:
                   deno-version: v1.22.x
 
             - name: Build targets
-              run: deno task compile
+              run: ./build
             
             - name: Release
               uses: softprops/action-gh-release@v1
               if: startsWith(github.ref, 'refs/tags/')
               with:
-                files: 'target/**/*'
+                files: 'target/*'

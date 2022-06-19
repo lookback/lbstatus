@@ -1,7 +1,7 @@
 {
   "tasks": {
     "run": "deno run --import-map ./import_map.json -c deno.json --allow-run --allow-read --allow-net main.ts",
-    "compile": "deno compile --import-map ./import_map.json -c deno.json  --allow-run --allow-read --allow-net -o target/$ARCH/lbstatus main.ts"
+    "compile": "deno compile --import-map ./import_map.json -c deno.json  --allow-run --allow-read --allow-net -o target/lbstatus-$ARCH main.ts"
   },
   "fmt": {
     "files": {
