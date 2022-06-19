@@ -63,29 +63,29 @@ ${Object.keys(allServices).map((s) => `* ${s}`).join('\n')}`);
         return allServices;
     })();
 
-    const doRun = async () => {
-        const results = await Promise.allSettled(
+    const doRun = () =>
+        Promise.allSettled(
             Object.entries(todo).map(([service, url]) => fetchStatus(service, url, env)),
-        );
-
-        const out = results.map((res): string => {
             // Deno still shows status as "fulfilled" even for rejected promises :O
-            const value = (res as PromiseFulfilledResult<Result>).value;
+        ).then((res) => res.map((r) => (r as PromiseFulfilledResult<Result>).value));
+
+    const print = (results: Result[]) => {
+        const out = results.map((res): string => {
             const prefix = args.watch ? colors.dim('[' + formatTime(new Date()) + '] ') : '';
 
-            switch (value.kind) {
+            switch (res.kind) {
                 case 'success':
-                    return prefix + colors.green(`${value.service.padEnd(25)}`) +
+                    return prefix + colors.green(`${res.service.padEnd(25)}`) +
                         ' ' +
                         env +
-                        (value.gitHash ? ' ' + colors.cyan(value.gitHash.substring(0, 8)) : '') +
+                        (res.gitHash ? ' ' + colors.cyan(res.gitHash.substring(0, 8)) : '') +
                         ' ' +
-                        (value.commit ? colors.blue(formatCommit(value.commit).padEnd(65)) : '') +
+                        (res.commit ? colors.blue(formatCommit(res.commit).padEnd(65)) : '') +
                         colors.dim(
-                            `uptime: ${value.uptime ? humanTimeOf(value.uptime) : '-'}`,
+                            `uptime: ${res.uptime ? humanTimeOf(res.uptime) : '-'}`,
                         );
                 case 'err':
-                    return prefix + colors.red(`%c${value.service.padEnd(10)}\t${value.msg}`);
+                    return prefix + colors.red(`%c${res.service.padEnd(10)}\t${res.msg}`);
             }
         });
 
@@ -93,14 +93,41 @@ ${Object.keys(allServices).map((s) => `* ${s}`).join('\n')}`);
     };
 
     if (args.watch) {
+        const prevHashes: Record<string, string | null> = {};
+        let first = true;
+
         while (1) {
-            await doRun();
+            const results = await doRun();
+
+            const diff: Result[] = [];
+
+            for (const res of results) {
+                const hash = (res.kind == 'success' ? res.gitHash : null) ?? null;
+                if (prevHashes[res.service] != hash) {
+                    diff.push(res);
+                    prevHashes[res.service] = hash;
+                }
+            }
+
+            if (diff.length > 0) {
+                if (!first) sep();
+                print(diff);
+                first = false;
+            }
+
             await sleep(2000);
         }
     } else {
-        await doRun();
+        print(await doRun());
     }
 };
+
+const sep = () =>
+    console.log(
+        colors.dim(
+            '------------------------------------------------------------------------------------------------------------------------------------',
+        ),
+    );
 
 interface Err {
     kind: 'err';
