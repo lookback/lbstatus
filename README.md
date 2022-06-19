@@ -21,19 +21,19 @@ curl -fsSL https://deno.land/install.sh | sh
 ### Running
 
 ```bash
-deno task run [args]
+deno task run [args to main.ts]
 ```
 
 ### Compile binaries
 
 ```bash
-deno task compile
+./build
 ```
-Will output binaries in `target` dir.
+Will output binaries for all relevant platforms into `target` dir.
 
 ### To do
 
 - [x] Parse non-JSON responses.
-- [ ] Watch mode. Clear buffer correctly for selected services while watching.
+- [x] Watch mode.
 - [ ] Docs.
-- [ ] Build releases with GitHub Actions.
+- [x] Build releases with GitHub Actions.
