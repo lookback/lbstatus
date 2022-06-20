@@ -7,20 +7,53 @@ const usage = () => {
 A tool for getting an overview of deployed commits in Lookback's micro services.
 
 USAGE
+-----
 
   lbstatus [-h/--help] [-w/--watch] [environment] [service]
+
+EXAMPLES
+--------
+
+$ lbstatus testing
+$ lbstatus testing lookback-ultron
 
 * Note that the "service" argument is the name of the GitHub repo.
 * "environment" argument is usually "testing | production".
 * "environment" defaults to "production".
+* Use "-" string for default: "lbstatus - lookback-ultron" will use "production".
 
 If you have the GitHub CLI installed ("gh"), the output will be enriched with
 commit messages for each service.
 
-EXAMPLES
+SERVICES
+--------
+The list of services (the name of their GitHub repositories) checked is:
 
-  $ lbstatus testing
-  $ lbstatus testing lookback-ultron
+* player
+* dashboard
+* settings
+* zodiac
+* nebula
+* que
+* umar
+* lookback-participate-web
+* lookback-ultron
+
+You can provide your own custom list by creating a file .lbstatus in your $HOME
+directory, where the keys are services and values are URLs:
+
+$ cat ~/.lbstatus
+player=https://$domain.$tld/play
+
+Do NOT add the full URL to the /ping endpoint – we'll handle that.
+
+In the URL string, we will replace:
+
+* $domain with "lookback" or "$env.lookback".
+* $tld with ".com" or ".io".
+* $svcDomain with "svc.$env.lookback".
+
+where $env is the "environment" argument to lbstatus.
 `);
 };
 

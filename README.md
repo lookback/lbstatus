@@ -1,6 +1,6 @@
 # lbstatus
 
-Command line tool for checking the deployed commit at various Lookback web services.
+Command line tool for checking the deployed commit of various Lookback web services.
 
 ## Installing
 
