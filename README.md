@@ -2,6 +2,15 @@
 
 Command line tool for checking the deployed commit at various Lookback web services.
 
+## Installing
+
+1. Grab the latest [release](https://github.com/lookback/lbstatus/releases) for your platform.
+2. Rename it `lbstatus` and put it somewhere in your `PATH`.
+   ```bash
+   # Example
+   $ mv ~/Downloads/lbstatus-aarch64-apple-darwin /usr/local/bin/lbstatus
+   ```
+
 ## Options and arguments
 
 TO DO.
