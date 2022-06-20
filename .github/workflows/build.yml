@@ -21,7 +21,7 @@ jobs:
             - name: Setup deno
               uses: denoland/setup-deno@v1
               with:
-                  deno-version: v1.22.x
+                  deno-version: v1.23.x
 
             - name: Build targets
               run: ./build
