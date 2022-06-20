@@ -1,8 +1,9 @@
 import { parse as parseFlags } from 'https://deno.land/std@0.143.0/flags/mod.ts';
 import { colors } from './deps.ts';
+import { VERSION } from './version.ts';
 
 const usage = () => {
-    console.log(`lbstatus
+    console.log(`lbstatus ${VERSION}
 =========
 A tool for getting an overview of deployed commits in Lookback's micro services.
 

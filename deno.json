@@ -1,13 +1,15 @@
 {
   "tasks": {
     "run": "deno run --import-map ./import_map.json -c deno.json --allow-run --allow-read --allow-net main.ts",
-    "compile": "deno compile --import-map ./import_map.json -c deno.json  --allow-run --allow-read --allow-net -o target/lbstatus-$ARCH main.ts"
+    "compile": "deno compile --import-map ./import_map.json -c deno.json  --allow-run --allow-read --allow-net -o target/lbstatus-$ARCH main.ts",
+    "version": "VERSION=$(deno run version.ts) && git tag $VERSION"
   },
   "fmt": {
     "files": {
       "include": [
         "main.ts",
-        "deps.ts"
+        "deps.ts",
+        "version.ts"
       ]
     },
     "options": {

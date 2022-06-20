@@ -5,6 +5,7 @@ on:
         paths:
             - 'deno.json'
             - 'main.ts'
+            - 'version.ts'
             - 'deps.ts'
             - 'build'
             - 'import_map.json'
