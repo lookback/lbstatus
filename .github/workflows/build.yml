@@ -25,6 +25,11 @@ jobs:
 
             - name: Build targets
               run: ./build
+
+            - name: Zip targets
+              uses: montudor/action-zip@v1
+              with:
+                args: zip -r aarch64-apple-darwin.zip target/lbstatus-aarch64-apple-darwin
             
             - name: Release
               uses: softprops/action-gh-release@v1
