@@ -8,7 +8,7 @@ A tool for getting an overview of deployed commits in Lookback's micro services.
 
 USAGE
 
-  lbstatus [-h/--help] [environment] [service]
+  lbstatus [-h/--help] [-w/--watch] [environment] [service]
 
 * Note that the "service" argument is the name of the GitHub repo.
 * "environment" argument is usually "testing | production".
