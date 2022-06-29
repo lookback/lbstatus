@@ -12,7 +12,7 @@ Command line tool for checking the deployed commit of various Lookback web servi
    # Example
    $ mv ~/Downloads/lbstatus-aarch64-apple-darwin /usr/local/bin/lbstatus
    ```
-### `deno install`
+### Using deno
 
 1. Install [Deno](https://deno.land/#installation).
 2. Install `lbstatus` from GitHub:
