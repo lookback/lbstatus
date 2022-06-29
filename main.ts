@@ -2,6 +2,10 @@ import { parse as parseFlags } from 'https://deno.land/std@0.143.0/flags/mod.ts'
 import { colors } from './deps.ts';
 import { VERSION } from './version.ts';
 
+const isPiped = !Deno.isatty(1);
+
+if (isPiped) colors.setColorEnabled(false);
+
 const usage = () => {
     console.log(`lbstatus ${VERSION}
 =========
@@ -80,10 +84,6 @@ interface Args {
 }
 
 const run = async (args: Args) => {
-    const isPiped = !Deno.isatty(1);
-
-    if (isPiped) colors.setColorEnabled(false);
-
     const env = args.environment ?? 'production';
 
     const allServices = await getServices();
