@@ -1,6 +1,0 @@
-{
-    "imports": {
-        "args": "https://deno.land/x/args@2.1.1/index.ts",
-        "colors": "https://deno.land/std@0.143.0/fmt/colors.ts"
-    }
-}

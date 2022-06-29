@@ -1,5 +1,4 @@
-import { parse as parseFlags } from 'https://deno.land/std@0.143.0/flags/mod.ts';
-import { colors } from './deps.ts';
+import { colors, flags } from './deps.ts';
 import { VERSION } from './version.ts';
 
 const isPiped = !Deno.isatty(1);
@@ -304,7 +303,7 @@ const fetchCommit = async (service: string, gitHash: string): Promise<Commit | n
 const sleep = (ms: number) => new Promise((rs) => setTimeout(rs, ms));
 
 const parseArgs = async (args: Array<string>): Promise<Args> => {
-    const { _, help, watch, list } = parseFlags(args, {
+    const { _, help, watch, list } = flags.parse(args, {
         alias: {
             help: 'h',
             watch: 'w',
