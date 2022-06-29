@@ -1,7 +1,7 @@
 {
   "tasks": {
     "run": "deno run -c deno.json --allow-run --allow-read --allow-net main.ts",
-    "compile": "deno compile-c deno.json  --allow-run --allow-read --allow-net -o target/lbstatus-$ARCH main.ts",
+    "compile": "deno compile -c deno.json  --allow-run --allow-read --allow-net -o target/lbstatus-$ARCH main.ts",
     "version": "VERSION=$(deno run version.ts) && git add version.ts && git commit -m $VERSION && git tag $VERSION"
   },
   "fmt": {
