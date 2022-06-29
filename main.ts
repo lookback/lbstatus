@@ -80,6 +80,10 @@ interface Args {
 }
 
 const run = async (args: Args) => {
+    const isPiped = !Deno.isatty(1);
+
+    if (isPiped) colors.setColorEnabled(false);
+
     const env = args.environment ?? 'production';
 
     const allServices = await getServices();
@@ -105,7 +109,7 @@ ${Object.keys(allServices).map((s) => `* ${s}`).join('\n')}`);
 
     const print = (results: Result[]) => {
         const out = results.map((res): string => {
-            const prefix = args.watch ? colors.dim('[' + formatTime(new Date()) + '] ') : '';
+            const prefix = colors.dim('[' + formatTime(new Date()) + '] ');
 
             switch (res.kind) {
                 case 'success':
