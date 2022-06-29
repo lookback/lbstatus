@@ -63,14 +63,6 @@ where $env is the "environment" argument to lbstatus.
 `);
 };
 
-const listServices = async () => {
-    const services = await getServices();
-
-    for (const [name, url] of Object.entries(services)) {
-        console.log(`${name.padEnd(30)} ${colors.dim(url)}`);
-    }
-};
-
 const SERVICES_LOC = '~/.lbservices';
 const PING_ENDPOINT = '/ping';
 
@@ -90,12 +82,25 @@ interface Args {
     environment?: string;
     service?: string;
     watch: boolean;
+    help: boolean;
+    list: boolean;
 }
 
 const run = async (args: Args) => {
-    const env = args.environment ?? 'production';
+    if (args.help) {
+        usage();
+        Deno.exit(0);
+    }
 
     const allServices = await getServices();
+
+    if (args.list) {
+        listServices(allServices);
+        Deno.exit(0);
+    }
+
+    const env = args.environment ?? 'production';
+
     const todo = (() => {
         if (args.service) {
             if (!allServices[args.service]) {
@@ -302,7 +307,7 @@ const fetchCommit = async (service: string, gitHash: string): Promise<Commit | n
 
 const sleep = (ms: number) => new Promise((rs) => setTimeout(rs, ms));
 
-const parseArgs = async (args: Array<string>): Promise<Args> => {
+const parseArgs = (args: Array<string>): Args => {
     const { _, help, watch, list } = flags.parse(args, {
         alias: {
             help: 'h',
@@ -310,16 +315,6 @@ const parseArgs = async (args: Array<string>): Promise<Args> => {
             list: 'l',
         },
     });
-
-    if (help) {
-        usage();
-        Deno.exit(0);
-    }
-
-    if (list) {
-        await listServices();
-        Deno.exit(0);
-    }
 
     // "-" means default
     const get = (idx: number) => !_[idx] || _[idx] == '-' ? undefined : String(_[idx]);
@@ -331,6 +326,8 @@ const parseArgs = async (args: Array<string>): Promise<Args> => {
         environment,
         service,
         watch,
+        help,
+        list,
     };
 };
 
@@ -354,9 +351,15 @@ const getServices = (): Promise<Record<string, string>> =>
             crash(`Error when reading ${SERVICES_LOC}:`, err);
         });
 
+const listServices = (services: Record<string, string>) => {
+    for (const [name, url] of Object.entries(services)) {
+        console.log(`${name.padEnd(30)} ${colors.dim(url)}`);
+    }
+};
+
 // Kick it off
 
-parseArgs(Deno.args).then(run).catch((err) => crash('Error when running lbstatus:', err));
+run(parseArgs(Deno.args)).catch((err) => crash('Error when running lbstatus:', err));
 
 // Small helpers
 
