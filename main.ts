@@ -14,7 +14,7 @@ A tool for getting an overview of deployed commits in Lookback's micro services.
 USAGE
 -----
 
-  lbstatus [-h/--help] [-w/--watch] [environment] [service]
+  lbstatus [-h/--help] [-w/--watch] [-l/--list] [environment] [service]
 
 EXAMPLES
 --------
@@ -44,6 +44,8 @@ The list of services (the name of their GitHub repositories) checked is:
 * lookback-participate-web
 * lookback-ultron
 
+Use the --list option to print the definite list of services checked.
+
 You can provide your own custom list by creating a file .lbstatus in your $HOME
 directory, where the keys are services and values are URLs:
 
@@ -60,6 +62,14 @@ In the URL string, we will replace:
 
 where $env is the "environment" argument to lbstatus.
 `);
+};
+
+const listServices = async () => {
+    const services = await getServices();
+
+    for (const [name, url] of Object.entries(services)) {
+        console.log(`${name.padEnd(30)} ${colors.dim(url)}`);
+    }
 };
 
 const SERVICES_LOC = '~/.lbservices';
@@ -113,7 +123,7 @@ ${Object.keys(allServices).map((s) => `* ${s}`).join('\n')}`);
 
             switch (res.kind) {
                 case 'success':
-                    return prefix + colors.green(`${res.service.padEnd(25)}`) +
+                    return prefix + colors.green(`${res.service.padEnd(30)}`) +
                         ' ' +
                         env +
                         (res.gitHash ? ' ' + colors.cyan(res.gitHash.substring(0, 8)) : '') +
@@ -293,16 +303,22 @@ const fetchCommit = async (service: string, gitHash: string): Promise<Commit | n
 
 const sleep = (ms: number) => new Promise((rs) => setTimeout(rs, ms));
 
-const parseArgs = (args: Array<string>): Args => {
-    const { _, help, watch } = parseFlags(args, {
+const parseArgs = async (args: Array<string>): Promise<Args> => {
+    const { _, help, watch, list } = parseFlags(args, {
         alias: {
             help: 'h',
             watch: 'w',
+            list: 'l',
         },
     });
 
     if (help) {
         usage();
+        Deno.exit(0);
+    }
+
+    if (list) {
+        await listServices();
         Deno.exit(0);
     }
 
@@ -341,7 +357,7 @@ const getServices = (): Promise<Record<string, string>> =>
 
 // Kick it off
 
-run(parseArgs(Deno.args)).catch((err) => crash('Error when running command:', err));
+parseArgs(Deno.args).then(run).catch((err) => crash('Error when running lbstatus:', err));
 
 // Small helpers
 
