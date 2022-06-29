@@ -12,6 +12,27 @@ Command line tool for checking the deployed commit of various Lookback web servi
    # Example
    $ mv ~/Downloads/lbstatus-aarch64-apple-darwin /usr/local/bin/lbstatus
    ```
+### `deno install`
+
+1. Install [Deno](https://deno.land/#installation).
+2. Install `lbstatus` from GitHub:
+
+```bash
+deno install \
+    # Allow running as a CLI
+    --allow-run \
+    # Allow reading local config file
+    --allow-read \
+    # Allow HTTP calls
+    --allow-net \
+    # Preferred name as CLI program
+    -n lbstatus \
+    https://raw.githubusercontent.com/lookback/lbstatus/main/main.ts
+```
+
+Adjust the GitHub URL for another tag or hash version.
+
+If upgrading `lbstatus` via this method, you might need to tack on `-r` switch to reload Deno's local cache.
 
 ## Options and arguments
 
