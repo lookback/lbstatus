@@ -37,11 +37,12 @@ If upgrading `lbstatus` via this method, you might need to tack on `-r` switch t
 ## Options and arguments
 
 ```bash
-lbstatus [-h/--help] [-w/--watch] [-l/--list] [environment] [service]
+lbstatus [-h/--help] [-w/--watch] [-l/--list] [-b/--bootstrap] [environment] [service]
 ```
 
 * `--watch` will check every 2 seconds and log when a new commit hash is detected in the service(s).
 * `--list` prints all available services to check.
+* `--bootstrap` when used with `--list` prints the available services in a format suitable for bootstrapping an `.lbstatus` configuration file.
 * `--help` shows usage help.
 * `environment` defaults to "production".
 * Use a `-` string for default: `lbstatus - lookback-ultron` will use "production" environment.
