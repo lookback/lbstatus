@@ -13,7 +13,7 @@ A tool for getting an overview of deployed commits in Lookback's micro services.
 USAGE
 -----
 
-  lbstatus [-h/--help] [-w/--watch] [-l/--list] [environment] [service]
+  lbstatus [-h/--help] [-w/--watch] [-l/--list] [-b/--bootstrap] [environment] [service]
 
 EXAMPLES
 --------
@@ -60,6 +60,9 @@ In the URL string, we will replace:
 * $svcDomain with "svc.$env.lookback".
 
 where $env is the "environment" argument to lbstatus.
+
+To boostrap a ~/.lbstatus file run:
+$ lbstatus -l -b > ~/.lbstatus
 `);
 };
 
@@ -84,6 +87,7 @@ interface Args {
     watch: boolean;
     help: boolean;
     list: boolean;
+    bootstrap: boolean;
 }
 
 const run = async (args: Args) => {
@@ -95,7 +99,7 @@ const run = async (args: Args) => {
     const allServices = await getServices();
 
     if (args.list) {
-        listServices(allServices);
+        listServices(allServices, args.bootstrap);
         Deno.exit(0);
     }
 
@@ -308,11 +312,12 @@ const fetchCommit = async (service: string, gitHash: string): Promise<Commit | n
 const sleep = (ms: number) => new Promise((rs) => setTimeout(rs, ms));
 
 const parseArgs = (args: Array<string>): Args => {
-    const { _, help, watch, list } = flags.parse(args, {
+    const { _, help, watch, list, bootstrap } = flags.parse(args, {
         alias: {
             help: 'h',
             watch: 'w',
             list: 'l',
+            bootstrap: 'b',
         },
     });
 
@@ -328,6 +333,7 @@ const parseArgs = (args: Array<string>): Args => {
         watch,
         help,
         list,
+        bootstrap,
     };
 };
 
@@ -351,9 +357,16 @@ const getServices = (): Promise<Record<string, string>> =>
             crash(`Error when reading ${SERVICES_LOC}:`, err);
         });
 
-const listServices = (services: Record<string, string>) => {
+const listServices = (
+    services: Record<string, string>,
+    configCompatible?: boolean
+) => {
     for (const [name, url] of Object.entries(services)) {
-        console.log(`${name.padEnd(30)} ${colors.dim(url)}`);
+        if (configCompatible) {
+            console.log(`${name}=${url}`);
+        } else {
+            console.log(`${name.padEnd(30)} ${colors.dim(url)}`);
+        }
     }
 };
 
