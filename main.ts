@@ -66,7 +66,12 @@ $ lbstatus -l -b > ~/.lbstatus
 `);
 };
 
-const SERVICES_LOC = path.join(Deno.env.get('HOME'), '.lbstatus');
+const SERVICES_LOC = (() => {
+    let home = Deno.env.get('HOME');
+    if (!home) return null;
+
+    return path.join(home, '.lbstatus');
+})();
 const PING_ENDPOINT = '/ping';
 
 const HARDCODED_SERVICES = {
@@ -337,13 +342,19 @@ const parseArgs = (args: Array<string>): Args => {
     };
 };
 
-const getServices = (): Promise<Record<string, string>> =>
-    Deno.readTextFile(SERVICES_LOC)
+const getServices = (): Promise<Record<string, string>> => {
+    if (!SERVICES_LOC) {
+        return Promise.resolve(HARDCODED_SERVICES);
+    }
+
+    return Deno.readTextFile(SERVICES_LOC)
         .then((text) =>
             // array pairs to dict
             Object.assign(
                 {},
-                ...text.split('\n').map(line => line.trim()).filter((line) => !line.startsWith('#') && line.length > 0).map((line) => {
+                ...text.split('\n').map((line) => line.trim()).filter((line) =>
+                    !line.startsWith('#') && line.length > 0
+                ).map((line) => {
                     const [service, url] = line.split('=');
                     return { [service.trim()]: url.trim() };
                 }),
@@ -356,12 +367,11 @@ const getServices = (): Promise<Record<string, string>> =>
 
             crash(`Error when reading ${SERVICES_LOC}:`, err);
         });
-
-
+};
 
 const listServices = (
     services: Record<string, string>,
-    configCompatible?: boolean
+    configCompatible?: boolean,
 ) => {
     for (const [name, url] of Object.entries(services)) {
         if (configCompatible) {
