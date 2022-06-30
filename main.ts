@@ -1,4 +1,4 @@
-import { colors, flags } from './deps.ts';
+import { colors, flags, path } from './deps.ts';
 import { VERSION } from './version.ts';
 
 const isPiped = !Deno.isatty(1);
@@ -66,7 +66,7 @@ $ lbstatus -l -b > ~/.lbstatus
 `);
 };
 
-const SERVICES_LOC = '~/.lbservices';
+const SERVICES_LOC = path.join(Deno.env.get('HOME'), '.lbstatus');
 const PING_ENDPOINT = '/ping';
 
 const HARDCODED_SERVICES = {
@@ -343,7 +343,7 @@ const getServices = (): Promise<Record<string, string>> =>
             // array pairs to dict
             Object.assign(
                 {},
-                ...text.split('\n').filter((line) => !line.startsWith('#')).map((line) => {
+                ...text.split('\n').map(line => line.trim()).filter((line) => !line.startsWith('#') && line.length > 0).map((line) => {
                     const [service, url] = line.split('=');
                     return { [service.trim()]: url.trim() };
                 }),
@@ -356,6 +356,8 @@ const getServices = (): Promise<Record<string, string>> =>
 
             crash(`Error when reading ${SERVICES_LOC}:`, err);
         });
+
+
 
 const listServices = (
     services: Record<string, string>,
