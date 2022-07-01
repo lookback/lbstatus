@@ -25,6 +25,8 @@ deno install \
     --allow-read \
     # Allow HTTP calls
     --allow-net \
+    # Allow accessing env variables
+    --allow-env \
     # Preferred name as CLI program
     -n lbstatus \
     https://raw.githubusercontent.com/lookback/lbstatus/main/main.ts
